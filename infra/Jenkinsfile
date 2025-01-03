@@ -43,14 +43,34 @@ pipeline {
                 }
             }
         }
+
+        stage('Approve Plan') {
+            steps {
+                input message: 'Do you want to apply the Terraform changes?', ok: 'Apply'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('infra') {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
     }
 
     post {
         always {
             dir('infra') {
                 archiveArtifacts artifacts: '**/*.tfstate', allowEmptyArchive: true
+                cleanWs()
             }
-            cleanWs()
+        }
+        success {
+            echo 'Infrastructure deployed successfully!'
+        }
+        failure {
+            echo 'Infrastructure deployment failed!'
         }
     }
 }
