@@ -4,7 +4,7 @@ module "eks" {
   cluster_version = "1.27"
   vpc_id          = var.vpc_id
   subnet_ids      = var.public_subnets
-  node_groups = {
+  eks_managed_node_group_defaults = {
     default = {
       desired_capacity = 2
       max_capacity     = 5
