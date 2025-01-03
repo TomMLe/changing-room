@@ -10,22 +10,28 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Pull the Terraform code from Git
-                git branch: 'main', url: 'https://github.com/TomMLe/changing-room.git'
+                // Pull the Terraform code specifically in the `infra` directory
+                dir('infra') {
+                    git branch: 'main', url: 'https://github.com/TomMLe/changing-room.git'
+                }
             }
         }
 
         stage('Terraform Init') {
             steps {
-                // Initialize Terraform
-                sh 'terraform init'
+                dir('infra') {
+                    // Initialize Terraform within the infra directory
+                    sh 'terraform init'
+                }
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                // Generate the Terraform execution plan
-                sh 'terraform plan -out=tfplan'
+                dir('infra') {
+                    // Generate the Terraform execution plan within the infra directory
+                    sh 'terraform plan -out=tfplan'
+                }
             }
         }
 
@@ -38,17 +44,21 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                // Apply the Terraform execution plan
-                sh 'terraform apply -auto-approve tfplan'
+                dir('infra') {
+                    // Apply the Terraform execution plan within the infra directory
+                    sh 'terraform apply -auto-approve tfplan'
+                }
             }
         }
     }
 
     post {
         always {
-            // Archive the Terraform state files
-            archiveArtifacts artifacts: '**/*.tfstate', allowEmptyArchive: true
-            cleanWs()
+            dir('infra') {
+                // Archive the Terraform state files and clean workspace
+                archiveArtifacts artifacts: '**/*.tfstate', allowEmptyArchive: true
+                cleanWs()
+            }
         }
         success {
             echo 'Terraform applied successfully!'
