@@ -17,3 +17,9 @@ output "availability_zones" {
   description = "Availability zones used"
   value       = data.aws_availability_zones.available.names
 }
+
+output "default_security_group_id" {
+  description = "Default security group ID for the VPC"
+  value       = aws_security_group.default.id
+}
+

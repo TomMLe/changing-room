@@ -16,7 +16,7 @@ module "vpc" {
 module "ec2" {
   source          = "./modules/ec2"
   subnet_id       = module.vpc.public_subnet_ids[0]
-  security_group_id = module.vpc.ec2_security_group_id
+  security_group_id = module.vpc.default_security_group_id
   ami             = local.ami
   instance_type   = local.instance_type
   key_name        = local.key_name

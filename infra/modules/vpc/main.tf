@@ -67,3 +67,46 @@ resource "aws_route_table_association" "public_association" {
 data "aws_availability_zones" "available" {
   state = "available"
 }
+
+resource "aws_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.vpc_name}-DefaultSG"
+  }
+}
+
+resource "aws_security_group_rule" "allow_ssh" {
+  type        = "ingress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = var.allow_ssh_cidr_blocks
+  security_group_id = aws_security_group.default.id
+}
+
+resource "aws_security_group_rule" "allow_http" {
+  type        = "ingress"
+  from_port   = 80
+  to_port     = 80
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.default.id
+}
+
+resource "aws_security_group_rule" "allow_https" {
+  type        = "ingress"
+  from_port   = 443
+  to_port     = 443
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.default.id
+}
+

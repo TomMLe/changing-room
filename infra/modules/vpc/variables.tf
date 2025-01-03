@@ -19,3 +19,10 @@ variable "private_subnet_count" {
   type        = number
   default     = 2
 }
+
+variable "allow_ssh_cidr_blocks" {
+  description = "List of CIDR blocks allowed to SSH into the EC2 instances"
+  type        = list(string)
+  default     = ["0.0.0.0/0"] # Update this for security; use specific IPs
+}
+
