@@ -1,6 +1,6 @@
 # Provider Configuration
 provider "aws" {
-  region = var.region
+  region = local.region
 }
 
 # VPC Module
@@ -14,15 +14,15 @@ module "ec2" {
   source          = "./modules/ec2"
   subnet_id       = module.vpc.public_subnet_id
   security_group_id = module.vpc.ec2_security_group_id
-  ami             = var.ami
-  instance_type   = var.instance_type
-  key_name        = var.key_name
+  ami             = local.ami
+  instance_type   = local.instance_type
+  key_name        = local.key_name
 }
 
 # S3 Module
 module "s3" {
   source  = "./modules/s3"
-  bucket_name = var.bucket_name
+  bucket_name = local.bucket_name
 }
 
 # EKS Module
@@ -31,7 +31,7 @@ module "eks" {
   vpc_id          = module.vpc.vpc_id
   public_subnets  = module.vpc.public_subnet_ids
   private_subnets = module.vpc.private_subnet_ids
-  cluster_name    = var.cluster_name
+  cluster_name    = local.cluster_name
 }
 
 # Outputs
