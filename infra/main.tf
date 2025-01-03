@@ -5,14 +5,17 @@ provider "aws" {
 
 # VPC Module
 module "vpc" {
-  source  = "./modules/vpc"
-  cidr_block = "10.0.0.0/16"
+  source               = "./modules/vpc"
+  vpc_name             = "VR-Fashion-VPC"
+  cidr_block           = "10.0.0.0/16"
+  public_subnet_count  = 2
+  private_subnet_count = 2
 }
 
 # EC2 Module
 module "ec2" {
   source          = "./modules/ec2"
-  subnet_id       = module.vpc.public_subnet_id
+  subnet_id       = module.vpc.public_subnet_ids[0]
   security_group_id = module.vpc.ec2_security_group_id
   ami             = local.ami
   instance_type   = local.instance_type
@@ -29,7 +32,7 @@ module "s3" {
 module "eks" {
   source          = "./modules/eks"
   vpc_id          = module.vpc.vpc_id
-  public_subnets  = [module.vpc.public_subnet_id]
+  public_subnets  = module.vpc.public_subnet_ids
   cluster_name    = local.cluster_name
 }
 
